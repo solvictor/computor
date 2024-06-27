@@ -11,10 +11,15 @@ def main() -> None:
         exit(1)
 
     equation = args[1]
-    solver = Solver(equation)
+    solver = Solver()
     try:
-        solutions = solver.solve()
-
+        solutions = solver.solve(equation)
+        print("Reduced form:", solver.reduced)
+        print("Polynomial degree:", solver.degree)
+        if solver.degree > 2:
+            print("The polynomial degree is strictly greater than 2, I can't solve.")
+        elif solutions is None:
+            print()
         print(solutions)
     except Exception as ex:
         print(ex, file=sys.stderr)

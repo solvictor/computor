@@ -1,103 +1,74 @@
 from numbers import Number
 from typing import List, Dict
-
-
-def next_index(string: str, charset: str, start: int):
-    for i in range(start, len(string)):
-        if string[i] in charset:
-            return i
-    return -1
-
-
-def parse_exp(string: str) -> int:
-    if not string.startswith('X'):
-        raise SyntaxError(f"Invalid equation: '{string}' is unrecognized")
-
-    if len(string) == 1:
-        return 1
-
-    if string[1] != '^':
-        raise SyntaxError(f"Invalid equation: '{string}' is unrecognized")
-
-    exp = string[2:]
-    if not exp.isdigit():
-        raise SyntaxError(f"Invalid equation: '{exp}' should be an integer")
-
-    return int(exp)
-
-
-"-5.923 * X^0 + 4 * X^1 - 9.3 * X^2 = 1 * X^0"
-# Should return same as
-"-6.923*X^0+4*X^1-9.3*X^2"
-"-6.923+4*X^1-9.3*X^2"
-
-
-def parse_poly(polynom: str) -> Dict[int, float]:
-    if not polynom:
-        raise SyntaxError(f"Invalid equation: polynom is empty")
-
-    parsed = {}  # exp: mul
-
-    i = 0
-    while i < len(polynom):
-        end = next_index(polynom, "+-", i + 1)
-        if end == -1:
-            end = len(polynom)
-
-        part = polynom[i:end]
-        mul = 1.0
-        exp = 0
-
-        times = part.count("*")
-        if times > 1:
-            raise SyntaxError(f"Invalid equation: too many '*' in '{part}'")
-        if times == 1:
-            m, e = part.split('*')
-            try:
-                mul = float(m)
-            except Exception:
-                raise SyntaxError(f"Invalid equation: '{m}' should be a valid float")
-            exp = parse_exp(e)
-        else:
-            try:
-                mul = float(part)
-            except Exception:
-                exp = parse_exp(part)
-
-        # print(f"{part}   {mul = }   {exp = }")
-        parsed[exp] = parsed.get(exp, 0.0) + mul
-        i = end
-
-    return parsed
+from eq_parser import parse
 
 
 class Solver:
+    """Solve polynomial equation of degree <= 2
 
-    def __init__(self, equation: str) -> None:
-        self.equation = equation.upper()
+    Accepts only positive integers exponents
+    """
 
-    def _parse(self) -> Dict[int, float]:
-        equation = ''.join(c for c in self.equation if not c.isspace())
+    def __init__(self) -> None:
+        pass
 
-        if not equation:
-            raise SyntaxError("Invalid equation: equation is empty")
+    def reduce(self, terms: Dict[int, float], degree: int) -> str:
+        reduced = ""
+        for exp in range(degree + 1):
+            if exp in terms:
+                mul = terms[exp]
+                if mul == 0.0:
+                    continue
+                if reduced:
+                    reduced += ' '
+                if reduced and mul >= 0:
+                    reduced += '+ '
+                reduced += str(mul).removesuffix(".0")
+                if exp > 0:
+                    reduced += " * X"
+                    if exp > 1:
+                        reduced += f"^{exp}"
+        reduced = reduced.replace('-', "- ")
+        if reduced.startswith("- "):
+            reduced = '-' + reduced[2:]
+            reduced = reduced.replace("- ", '-', 1)
+        reduced += " = 0"
+        return reduced
 
-        equals = equation.count("=")
-        if equals > 1:
-            raise SyntaxError("Invalid equation: more than one '=' found")
-        elif equals == 0:  # TODO Maybe invalid too
-            equation += "=0"
+    def solve(self, equation: str) -> List[Number]:
+        parsed = parse(equation)
+        self.degree = max(parsed)
+        self.reduced = self.reduce(parsed, self.degree)
 
-        left, right = equation.split("=")
-        parsed = parse_poly(left)
-
-        for exp, mul in parse_poly(right).items():
-            parsed[exp] = parsed.get(exp, 0.0) - mul
-
-        return parsed
-
-    def solve(self) -> List[Number]:
-        parsed = self._parse()
-        degree = max(parsed)
-        print(f"{parsed = } {degree = }")
+        # print(f"{parsed = } {degree = }")
+        # print(f"{self.reduced = }")
         return []
+
+
+def main() -> None:
+    # Reducer tests
+    tests = [
+        ("1 + 2 + 3", "6 = 0"),
+        ("1 + 2 + 3 * X^0", "6 = 0"),
+        ("1 + 2 + 3 * X", "3 + 3 * X = 0"),
+        ("1 + 2 * X ^ 1 + 3 * X", "1 + 5 * X = 0"),
+        ("1 + 2 * X ^ 1 + 3 * X - 3 * X ^ 0", "-2 + 5 * X = 0"),
+        ("1 + 2 * X ^ 1 + 3 * X - 7 * X ^ 2", "1 + 5 * X - 7 * X^2 = 0"),
+        ("-5 * X + 1 + 2 * X ^ 1 + 3 * X - 7 * X ^ 2", "1 - 7 * X^2 = 0"),
+        ("-5 * X ^ 8 + 1 + 2 * X ^ 1 + 3 * X - 7 * X ^ 2", "1 + 5 * X - 7 * X^2 - 5 * X^8 = 0"),
+        ("5 * X^0 + 4 * X^1 - 9.3 * X^2 = 1 * X^0", "4 + 4 * X - 9.3 * X^2 = 0"),
+    ]
+
+    solver = Solver()
+    for eq, p in tests:
+        solver.solve(eq)
+        res = solver.reduced
+        if res != p:
+            print("Failed for", eq)
+            print("Found   :", res)
+            print("Expected:", p)
+            print()
+
+
+if __name__ == "__main__":
+    main()
