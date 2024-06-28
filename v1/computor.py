@@ -3,8 +3,9 @@ from solver import Solver
 
 
 # TODO Read from stdin if no input ?
-# TODO Add docstring
 def main() -> None:
+    """Compute and format the solutions of the input equation"""
+
     args = sys.argv
 
     if len(args) != 2:

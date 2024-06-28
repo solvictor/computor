@@ -2,6 +2,17 @@ from typing import Dict
 
 
 def next_index(string: str, charset: str, start: int = 0) -> int:
+    """Function that return the first index of any character in charset
+
+    Args:
+        string (str): string to search in
+        charset (str): charset to search
+        start (int, optional): starting index. Defaults to 0.
+
+    Returns:
+        int: -1 if not characters were found or the index
+    """
+
     for i in range(start, len(string)):
         if string[i] in charset:
             return i
@@ -9,6 +20,18 @@ def next_index(string: str, charset: str, start: int = 0) -> int:
 
 
 def parse_exp(string: str) -> int:
+    """Parse an exponent
+
+    Args:
+        string (str): the string
+
+    Raises:
+        SyntaxError: if the exponent is not well formatted
+
+    Returns:
+        int: the exponent
+    """
+
     if not string.startswith('X'):
         raise SyntaxError(f"Invalid equation: '{string}' is unrecognized")
 
@@ -26,6 +49,18 @@ def parse_exp(string: str) -> int:
 
 
 def parse_poly(polynom: str) -> Dict[int, float]:
+    """Parse a polynom
+
+    Args:
+        polynom (str): the polynom
+
+    Raises:
+        SyntaxError: if the polynom is not well formatted
+
+    Returns:
+        Dict[int, float]: exponent: mulitplier for each term
+    """
+
     if not polynom:
         raise SyntaxError("Invalid equation: polynom is empty")
 
@@ -68,6 +103,18 @@ def parse_poly(polynom: str) -> Dict[int, float]:
 
 
 def parse(equation: str) -> Dict[int, float]:
+    """Parse an equation
+
+    Args:
+        equation (str): the equation
+
+    Raises:
+        SyntaxError: if the equation is not well formated
+
+    Returns:
+        Dict[int, float]: exponent: mulitplier for each term
+    """
+
     equation = ''.join(c for c in equation if not c.isspace()).upper()
 
     if not equation:
@@ -76,7 +123,7 @@ def parse(equation: str) -> Dict[int, float]:
     equals = equation.count("=")
     if equals > 1:
         raise SyntaxError("Invalid equation: more than one '=' found")
-    elif equals == 0:  # TODO Maybe invalid too
+    elif equals == 0:  # May be considered invalid too
         equation += "=0"
 
     left, right = equation.split("=")
@@ -91,6 +138,8 @@ def parse(equation: str) -> Dict[int, float]:
 
 
 def main() -> None:
+    """Tests the parser"""
+
     # Parser tests
     tests = [
         ("1 + 2 + 3", {0: 6}),

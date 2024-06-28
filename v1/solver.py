@@ -13,6 +13,18 @@ class Solver:
         pass
 
     def reduce(self, terms: Dict[int, float], degree: int) -> str:
+        """Simplify an equation
+
+        Args:
+            terms (Dict[int, float]): terms (exp : mul)
+            degree (int): degree of the equation
+
+        Returns:
+            str: simplified equation
+        """
+
+        if not terms:
+            return "0 = 0"
         reduced = ""
         for exp in range(degree + 1):
             if exp in terms:
@@ -36,8 +48,20 @@ class Solver:
         return reduced
 
     def solve(self, equation: str) -> List[Number] | None:
+        """Solve an equation
+
+        Works for degree < 3
+        Compute the reduced form in self.reduced
+
+        Args:
+            equation (str): equation to solve
+
+        Returns:
+            List[Number] | None: the solutions or None if no solution (empty = any number is solution)
+        """
+
         parsed = parse(equation)
-        self.degree = max(parsed)
+        self.degree = max(parsed) if parsed else 0
         self.reduced = self.reduce(parsed, self.degree)
         a = parsed.get(2, 0.0)
         b = parsed.get(1, 0.0)
@@ -46,7 +70,7 @@ class Solver:
 
         solutions = []
         if self.degree == 0:
-            return [] if parsed else None  # TODO Tests
+            return None if parsed else []
         elif self.degree == 1:
             solutions.append(-c / b)
         elif self.degree == 2:
@@ -63,6 +87,8 @@ class Solver:
 
 
 def main() -> None:
+    """Tests the equation reducer"""
+
     # Reducer tests
     tests = [
         ("1 + 2 + 3", "6 = 0"),
