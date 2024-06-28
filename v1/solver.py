@@ -35,14 +35,31 @@ class Solver:
         reduced += " = 0"
         return reduced
 
-    def solve(self, equation: str) -> List[Number]:
+    def solve(self, equation: str) -> List[Number] | None:
         parsed = parse(equation)
         self.degree = max(parsed)
         self.reduced = self.reduce(parsed, self.degree)
+        a = parsed.get(2, 0.0)
+        b = parsed.get(1, 0.0)
+        c = parsed.get(0, 0.0)
+        self.delta = b * b - 4 * a * c
 
-        # print(f"{parsed = } {degree = }")
-        # print(f"{self.reduced = }")
-        return []
+        solutions = []
+        if self.degree == 0:
+            return [] if parsed else None # TODO Tests
+        elif self.degree == 1:
+            solutions.append(-c / b)
+        elif self.degree == 2:
+            if self.delta > 0:
+                solutions.append((-b + self.delta**.5) / (2 * a))
+                solutions.append((-b - self.delta**.5) / (2 * a))
+            elif self.delta < 0:  # Complex solutions
+                solutions.append((-b + 1j * (-self.delta)**.5) / (2 * a))
+                solutions.append((-b - 1j * (-self.delta)**.5) / (2 * a))
+            else:
+                solutions.append(-b / (2 * a))
+
+        return solutions
 
 
 def main() -> None:

@@ -49,7 +49,7 @@ def parse_poly(polynom: str) -> Dict[int, float]:
             try:
                 mul = float(m)
             except Exception:
-                raise SyntaxError(f"Invalid equation: '{m}' should be a valid float")
+                raise SyntaxError(f"Invalid equation: '{m}' must be a float")
             exp = parse_exp(e)
         else:
             try:
@@ -85,6 +85,8 @@ def parse(equation: str) -> Dict[int, float]:
 
     for exp, mul in parse_poly(right).items():
         parsed[exp] = parsed.get(exp, 0.0) - mul
+        if parsed[exp] == 0.0:
+            del parsed[exp]
 
     return parsed
 
