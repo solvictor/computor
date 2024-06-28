@@ -76,6 +76,18 @@ def parse_poly(polynom: str) -> Dict[int, float]:
         mul = 1.0
         exp = 0
 
+        # TODO Better parsing
+        # part = term.split("*")
+        # for e in part:
+        #     try:
+        #         mul *= float(e)
+        #     except Exception:
+        #         if e[0] == '-':
+        #             mul *= -1.0
+        #         if e[0] in "+-":
+        #             e = e[1:]
+        #         exp += parse_exp(e)
+
         times = term.count("*")
         if times > 1:
             raise SyntaxError(f"Invalid equation: too many '*' in '{term}'")

@@ -30,8 +30,13 @@ def main() -> None:
             if solver.delta == 0:
                 print("Discriminant is zero, the solution is:")
             else:
-                print(f"Discriminant is strictly {"positive" if solver.delta > 0 else "netagive"}, the two solutions are:")
-            print(*solutions, sep='\n')
+                print(f"Discriminant is strictly {"positive" if solver.delta > 0 else "negative"}, the two solutions are:")
+
+            for solution in solutions:
+                if isinstance(solution, complex):
+                    print(f"{solution.real} {solution.imag:+}i")
+                else:
+                    print(solution)
 
     except Exception as ex:
         print(ex, file=sys.stderr)
