@@ -3,6 +3,7 @@ from solver import Solver
 
 
 # TODO Read from stdin if no input ?
+# TODO Add docstring
 def main() -> None:
     args = sys.argv
 
@@ -14,7 +15,6 @@ def main() -> None:
     solver = Solver()
     try:
         solutions = solver.solve(equation)
-        print(f"{solutions=}")
         print("Reduced form:", solver.reduced)
         print("Polynomial degree:", solver.degree)
         if solver.degree > 2:

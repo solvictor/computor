@@ -61,7 +61,6 @@ def parse_poly(polynom: str) -> Dict[int, float]:
                     term = term[1:]
                 exp = parse_exp(term)
 
-        # print(f"{part}   {mul = }   {exp = }")
         parsed[exp] = parsed.get(exp, 0.0) + mul
         i = end
 

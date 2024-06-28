@@ -46,7 +46,7 @@ class Solver:
 
         solutions = []
         if self.degree == 0:
-            return [] if parsed else None # TODO Tests
+            return [] if parsed else None  # TODO Tests
         elif self.degree == 1:
             solutions.append(-c / b)
         elif self.degree == 2:
