@@ -166,10 +166,8 @@ def parse(equation: str) -> Dict[int, float]:
 
     for exp, mul in parse_poly(right).items():
         parsed[exp] = parsed.get(exp, 0.0) - mul
-        if parsed[exp] == 0.0:
-            del parsed[exp]
 
-    return parsed
+    return {k: v for k, v in parsed.items() if v != 0.0}
 
 
 def main() -> None:

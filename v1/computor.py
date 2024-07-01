@@ -2,7 +2,6 @@ import sys
 from solver import Solver
 
 
-# TODO Read from stdin if no input ?
 def main() -> None:
     """Compute and format the solutions of the input equation"""
 
@@ -29,6 +28,8 @@ def main() -> None:
         else:
             if solver.delta == 0:
                 print("Discriminant is zero, the solution is:")
+            elif solver.degree == 1:
+                print("The solution is:")
             else:
                 print(f"Discriminant is strictly {"positive" if solver.delta > 0 else "negative"}, the two solutions are:")
 
