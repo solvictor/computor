@@ -1,4 +1,7 @@
-from typing import Dict
+from typing import Dict, Tuple
+
+
+VALID_CHARS = "0123456789X=.-+*^"
 
 
 def next_index(string: str, charset: str, start: int = 0) -> int:
@@ -10,7 +13,7 @@ def next_index(string: str, charset: str, start: int = 0) -> int:
         start (int, optional): starting index. Defaults to 0.
 
     Returns:
-        int: -1 if not characters were found or the index
+        int: index of the first character in both string and charset or -1
     """
 
     for i in range(start, len(string)):
@@ -48,6 +51,62 @@ def parse_exp(string: str) -> int:
     return int(exp)
 
 
+def parse_term(polynom: str, i: int) -> Tuple[int, int, int]:
+    """Parse the term at index i in polynom
+
+    Args:
+        polynom (str): the polynom
+        i (int): starting index of the term
+
+    Raises:
+        SyntaxError: if the term is not well formatted
+
+    Returns:
+        Tuple[int, int, int]: exponent, multiplier, end index
+    """
+
+    end = next_index(polynom, "+-", i + 1)
+    if end == -1:
+        end = len(polynom)
+
+    term = polynom[i:end]
+    mul = 1.0
+    exp = 0
+
+    # TODO Better parsing
+    # part = term.split("*")
+    # for e in part:
+    #     try:
+    #         mul *= float(e)
+    #     except Exception:
+    #         if e[0] == '-':
+    #             mul *= -1.0
+    #         if e[0] in "+-":
+    #             e = e[1:]
+    #         exp += parse_exp(e)
+
+    times = term.count("*")
+    if times > 1:
+        raise SyntaxError(f"Invalid equation: too many '*' in '{term}'")
+    if times == 1:
+        m, e = term.split('*')
+        try:
+            mul = float(m)
+        except Exception:
+            raise SyntaxError(f"Invalid equation: '{m}' must be a float")
+        exp = parse_exp(e)
+    else:
+        try:
+            mul = float(term)
+        except Exception:
+            if term[0] == '-':
+                mul = -1.0
+            if term[0] in "+-":
+                term = term[1:]
+            exp = parse_exp(term)
+    return exp, mul, end
+
+
 def parse_poly(polynom: str) -> Dict[int, float]:
     """Parse a polynom
 
@@ -64,50 +123,14 @@ def parse_poly(polynom: str) -> Dict[int, float]:
     if not polynom:
         raise SyntaxError("Invalid equation: polynom is empty")
 
+    if not all(c in VALID_CHARS for c in polynom):
+        raise SyntaxError("Invalid equation: bad characters found")
+
     parsed = {}  # exp: mul
 
     i = 0
     while i < len(polynom):
-        end = next_index(polynom, "+-", i + 1)
-        if end == -1:
-            end = len(polynom)
-
-        term = polynom[i:end]
-        mul = 1.0
-        exp = 0
-
-        # TODO Better parsing
-        # part = term.split("*")
-        # for e in part:
-        #     try:
-        #         mul *= float(e)
-        #     except Exception:
-        #         if e[0] == '-':
-        #             mul *= -1.0
-        #         if e[0] in "+-":
-        #             e = e[1:]
-        #         exp += parse_exp(e)
-
-        times = term.count("*")
-        if times > 1:
-            raise SyntaxError(f"Invalid equation: too many '*' in '{term}'")
-        if times == 1:
-            m, e = term.split('*')
-            try:
-                mul = float(m)
-            except Exception:
-                raise SyntaxError(f"Invalid equation: '{m}' must be a float")
-            exp = parse_exp(e)
-        else:
-            try:
-                mul = float(term)
-            except Exception:
-                if term[0] == '-':
-                    mul = -1.0
-                if term[0] in "+-":
-                    term = term[1:]
-                exp = parse_exp(term)
-
+        exp, mul, end = parse_term(polynom, i)
         parsed[exp] = parsed.get(exp, 0.0) + mul
         i = end
 
