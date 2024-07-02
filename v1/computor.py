@@ -35,7 +35,8 @@ def main() -> None:
 
             for solution in solutions:
                 if isinstance(solution, complex):
-                    print(f"{solution.real} {solution.imag:+}i")
+                    real, imag = solution.real, solution.imag
+                    print(f"{real} {imag:+}i" if real else f"{imag}i")
                 else:
                     print(solution)
 
