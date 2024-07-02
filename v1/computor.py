@@ -1,20 +1,31 @@
 import sys
 from solver import Solver
+from sol_formatter import format_sol
+from argparse import ArgumentParser
 
 
 def main() -> None:
     """Compute and format the solutions of the input equation"""
 
-    args = sys.argv
+    parser = ArgumentParser(
+        prog="ComputorV1",
+        description="Solve polynomial equation up to degree 2")
 
-    if len(args) != 2:
-        print("Usage: python3 computer.py <equation>", file=sys.stderr)
-        exit(1)
+    parser.add_argument(
+        "equation",
+        help="Equation to solve"
+    )
+    parser.add_argument(
+        "-d",
+        "--display",
+        action="store_true",
+        help="Displays intermediate steps"
+    )
 
-    equation = args[1]
+    args = parser.parse_args()
     solver = Solver()
     try:
-        solutions = solver.solve(equation)
+        solutions = solver.solve(args.equation, args.display)
         print("Reduced form:", solver.reduced)
         print("Polynomial degree:", solver.degree)
         if solver.degree > 2:
@@ -34,11 +45,7 @@ def main() -> None:
                 print(f"Discriminant is strictly {"positive" if solver.delta > 0 else "negative"}, the two solutions are:")
 
             for solution in solutions:
-                if isinstance(solution, complex):
-                    real, imag = solution.real, solution.imag
-                    print(f"{real} {imag:+}i" if real else f"{imag}i")
-                else:
-                    print(solution)
+                print(format_sol(solution))
 
     except Exception as ex:
         print(ex, file=sys.stderr)

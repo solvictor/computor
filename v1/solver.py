@@ -47,7 +47,7 @@ class Solver:
         reduced += " = 0"
         return reduced
 
-    def solve(self, equation: str) -> List[Number] | None:
+    def solve(self, equation: str, display: bool) -> List[Number] | None:
         """Solve an equation
 
         Works for degree < 3
@@ -55,10 +55,14 @@ class Solver:
 
         Args:
             equation (str): equation to solve
+            display (bool): display intermediate steps
 
         Returns:
             List[Number] | None: the solutions or None if no solution (empty = any number is solution)
         """
+
+        if display: # TODO Finish
+            print("First parse the equation")
 
         parsed = parse(equation)
         self.degree = max(parsed) if parsed else 0
