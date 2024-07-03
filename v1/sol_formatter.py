@@ -14,7 +14,7 @@ def __format(x: float, add_plus: bool = False) -> str:
     """
 
     d = str(x)
-    f = str(Fraction(d)) # TODO 1/3 & 1/7 not working
+    f = str(Fraction(d).limit_denominator())
     best = min(f, d, key=len)
     if add_plus and x >= 0:
         best = '+' + best
@@ -37,9 +37,14 @@ def format_sol(n: Number) -> str:
     if isinstance(n, complex):
         real, imag = n.real, n.imag
         if real:
-            res = f"{__format(real)} {__format(imag, True)}i"
+            fimag = __format(imag, True)
+            if abs(imag) == 1:
+                fimag = fimag.replace('1', '')
+            res = f"{__format(real)} {fimag}i"
         else:
             res = f"{__format(imag)}i"
+            if abs(imag) == 1:
+                res = res.replace('1', '')
     else:
         res = __format(n)
 
