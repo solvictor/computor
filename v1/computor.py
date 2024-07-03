@@ -9,7 +9,8 @@ def main() -> None:
 
     parser = ArgumentParser(
         prog="ComputorV1",
-        description="Solve polynomial equation up to degree 2")
+        description="Solve polynomial equation up to degree 2"
+    )
 
     parser.add_argument(
         "equation",
@@ -37,10 +38,10 @@ def main() -> None:
             # "2 * X^0 = 2 * X^0" - Any number
             print("Any real number is a solution")
         else:
-            if solver.delta == 0:
-                print("Discriminant is zero, the solution is:")
-            elif solver.degree == 1:
+            if solver.degree == 1:
                 print("The solution is:")
+            elif solver.delta == 0:
+                print("Discriminant is zero, the solution is:")
             else:
                 print(f"Discriminant is strictly {"positive" if solver.delta > 0 else "negative"}, the two solutions are:")
 
