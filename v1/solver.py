@@ -96,21 +96,21 @@ class Solver:
                 print(f"delta = {b}^2 - 4 * {a} * {c} = {self.delta}")
             if self.delta > 0:
                 if display:
-                    print("Since delta > 0 there is two real solutions x1 and x2")
+                    print("Since delta > 0, there is two real solutions x1 and x2")
                     print(f"x1 = (-b + sqrt(delta)) / (2 * a) = ({-b} + {self.delta**.5}) / {2 * a}")
                     print(f"x2 = (-b - sqrt(delta)) / (2 * a) = ({-b} - {self.delta**.5}) / {2 * a}")
                 solutions.append((-b + self.delta**.5) / (2 * a))
                 solutions.append((-b - self.delta**.5) / (2 * a))
             elif self.delta < 0:
                 if display:
-                    print("Since delta < 0 there is two complex solutions x1 and x2")
+                    print("Since delta < 0, there is two complex solutions x1 and x2")
                     print(f"x1 = (-b + sqrt(-delta)i) / (2 * a) = ({-b} + {1j * (-self.delta)**.5}) / {2 * a})")
                     print(f"x2 = (-b - sqrt(-delta)i) / (2 * a) = ({-b} - {1j * (-self.delta)**.5}) / {2 * a})")
                 solutions.append((-b + 1j * (-self.delta)**.5) / (2 * a))
                 solutions.append((-b - 1j * (-self.delta)**.5) / (2 * a))
             else:
                 if display:
-                    print("Since delta = 0 there is one real solution x")
+                    print("Since delta = 0, there is one real solution x")
                     print(f"x = -b / (2 * a) = {-b} / {2 * a}")
                 solutions.append(-b / (2 * a))
 
